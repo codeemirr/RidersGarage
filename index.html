@@ -6,99 +6,58 @@
     <title>Riders Garage</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-zinc-950 text-white font-sans">
+<body>
 
-    <!-- Header -->
-    <header class="h-14 bg-zinc-900 border-b border-zinc-800 flex items-center px-4 md:px-8 shrink-0">
-        <div class="flex items-center gap-2">
-            <span class="text-2xl md:text-3xl">🏍️</span>
-            <h1 class="text-xl md:text-2xl font-bold tracking-tighter">Riders Garage</h1>
+    <!-- Üst Bar -->
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon">🏍️</span>
+            <span class="logo-text">Riders Garage</span>
         </div>
-        <!-- Mobilde chat/harita geçiş butonu -->
-        <button id="toggle-view" class="ml-auto md:hidden bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 rounded-xl text-sm font-medium transition">
-            💬 Sohbet
-        </button>
+        <nav class="nav-tabs">
+            <a href="#" class="nav-tab">🏠 Ana Sayfa</a>
+            <a href="#" class="nav-tab active">🗺️ Harita</a>
+            <a href="#" class="nav-tab">💬 Mesajlar</a>
+            <a href="#" class="nav-tab">👥 Gruplar</a>
+            <a href="#" class="nav-tab">👤 Profil</a>
+        </nav>
     </header>
 
-    <div class="flex main-container overflow-hidden">
+    <!-- Ana İçerik: Chat (sol) + Harita (sağ) -->
+    <main class="content">
 
-        <!-- Sol Sidebar - Masaüstünde görünür -->
-        <aside class="sidebar hidden md:flex w-56 bg-zinc-900 border-r border-zinc-800 flex-col py-6 shrink-0">
-            <nav class="flex-1 px-2 space-y-1">
-                <div class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 rounded-xl cursor-pointer text-sm">
-                    🏠 Ana Sayfa
-                </div>
-                <div class="flex items-center gap-3 px-4 py-3 bg-zinc-800 rounded-xl cursor-pointer text-sm font-medium">
-                    🗺️ Harita
-                </div>
-                <div class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 rounded-xl cursor-pointer text-sm">
-                    💬 Mesajlar
-                </div>
-                <div class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 rounded-xl cursor-pointer text-sm">
-                    👤 Profil
-                </div>
-            </nav>
-        </aside>
-
-        <!-- Ana İçerik -->
-        <div class="flex flex-1 min-w-0 relative">
-
-            <!-- Harita Alanı -->
-            <div id="map-container" class="map-panel flex-1 relative">
-                <div id="map" class="absolute inset-0"></div>
+        <!-- Sol: Chat -->
+        <div class="chat-panel">
+            <div class="chat-header">
+                <span class="chat-title">Canlı Sohbet</span>
+                <span class="online-badge">
+                    <span class="online-dot"></span>
+                    4 online
+                </span>
             </div>
-
-            <!-- Sağ Chat Paneli -->
-            <div id="chat-panel" class="chat-panel bg-zinc-900 border-l border-zinc-800 flex flex-col">
-                <div class="p-4 border-b border-zinc-800 flex items-center justify-between">
-                    <h2 class="text-base font-semibold">Canlı Sohbet</h2>
-                    <div class="px-2.5 py-1 bg-emerald-500 text-xs font-medium rounded-full flex items-center gap-1">
-                        <div class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
-                        4 online
-                    </div>
-                </div>
-
-                <!-- Mesajlar -->
-                <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4"></div>
-
-                <!-- Mesaj Gönderme -->
-                <div class="p-3 border-t border-zinc-800">
-                    <div class="flex gap-2">
-                        <input id="chat-input"
-                            type="text"
-                            class="flex-1 bg-zinc-800 text-white placeholder-zinc-400 rounded-full px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Mesaj yaz...">
-                        <button id="send-btn"
-                            class="bg-blue-600 hover:bg-blue-500 px-5 rounded-full text-sm font-medium transition">
-                            Gönder
-                        </button>
-                    </div>
-                </div>
+            <div id="chat-messages" class="chat-messages"></div>
+            <div class="chat-input-area">
+                <input id="chat-input" type="text" placeholder="Mesaj yaz..." />
+                <button id="send-btn">Gönder</button>
             </div>
         </div>
-    </div>
+
+        <!-- Sağ: Harita -->
+        <div class="map-panel">
+            <div id="map"></div>
+        </div>
+
+    </main>
 
     <!-- Mobil Alt Menü -->
-    <nav class="mobile-nav md:hidden fixed bottom-0 left-0 right-0 h-14 bg-zinc-900 border-t border-zinc-800 flex items-center justify-around z-50">
-        <div class="flex flex-col items-center text-xs text-zinc-400 cursor-pointer">
-            <span class="text-lg">🏠</span>
-            Ana Sayfa
-        </div>
-        <div class="flex flex-col items-center text-xs text-white cursor-pointer">
-            <span class="text-lg">🗺️</span>
-            Harita
-        </div>
-        <div class="flex flex-col items-center text-xs text-zinc-400 cursor-pointer">
-            <span class="text-lg">💬</span>
-            Mesajlar
-        </div>
-        <div class="flex flex-col items-center text-xs text-zinc-400 cursor-pointer">
-            <span class="text-lg">👤</span>
-            Profil
-        </div>
+    <nav class="mobile-nav">
+        <a href="#">🏠<span>Ana Sayfa</span></a>
+        <a href="#" class="active">🗺️<span>Harita</span></a>
+        <a href="#">💬<span>Mesajlar</span></a>
+        <a href="#">👥<span>Gruplar</span></a>
+        <a href="#">👤<span>Profil</span></a>
     </nav>
 
     <script src="script.js"></script>
