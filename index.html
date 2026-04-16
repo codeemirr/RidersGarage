@@ -10,7 +10,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { height: 100%; width: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #09090b; color: #fff; }
 
-        /* HEADER */
         .header { height: 56px; background: #18181b; border-bottom: 1px solid #27272a; display: flex; align-items: center; padding: 0 20px; gap: 28px; }
         .logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         .logo-icon { font-size: 26px; }
@@ -20,16 +19,15 @@
         .nav-tab:hover { background: #27272a; color: #fff; }
         .nav-tab.active { background: #27272a; color: #fff; }
 
-        /* ANA İÇERİK */
         .content { display: flex; flex-direction: row; height: calc(100vh - 56px); width: 100%; }
 
-        /* CHAT SOL */
         .chat-panel { width: 380px; min-width: 380px; max-width: 380px; height: 100%; background: #18181b; border-right: 1px solid #27272a; display: flex; flex-direction: column; }
         .chat-header { padding: 14px 16px; border-bottom: 1px solid #27272a; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
         .chat-title { font-size: 16px; font-weight: 600; }
         .online-badge { background: #10b981; color: #fff; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 5px; }
         .online-dot { width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
         .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
         .chat-messages::-webkit-scrollbar { width: 4px; }
         .chat-messages::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
@@ -40,6 +38,7 @@
         .msg-bubble { padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.45; word-break: break-word; }
         .msg.other .msg-bubble { background: #27272a; border-bottom-left-radius: 4px; }
         .msg.self .msg-bubble { background: #2563eb; border-bottom-right-radius: 4px; }
+
         .chat-input-area { padding: 12px; border-top: 1px solid #27272a; display: flex; gap: 8px; flex-shrink: 0; }
         .chat-input-area input { flex: 1; background: #27272a; border: none; color: #fff; padding: 10px 16px; border-radius: 24px; font-size: 14px; outline: none; }
         .chat-input-area input::placeholder { color: #71717a; }
@@ -47,11 +46,9 @@
         .chat-input-area button { background: #2563eb; color: #fff; border: none; padding: 10px 20px; border-radius: 24px; font-size: 14px; font-weight: 600; cursor: pointer; }
         .chat-input-area button:hover { background: #3b82f6; }
 
-        /* HARİTA SAĞ */
         .map-panel { flex: 1; height: 100%; position: relative; min-width: 0; }
         #map { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 1; }
 
-        /* MOBİL */
         .mobile-nav { display: none; }
         @media (max-width: 768px) {
             .nav-tabs { display: none; }
@@ -107,14 +104,14 @@
     </nav>
 
     <script>
-        let map, userMarker, fakeMarkers = [];
-        const fakeUsers = [
+        var map, userMarker, fakeMarkers = [];
+        var fakeUsers = [
             { name: "Kaan Moto", lat: 41.0125, lng: 28.9850 },
             { name: "Deniz Rider", lat: 41.0050, lng: 28.9700 },
             { name: "Ece Speed", lat: 41.0150, lng: 28.9900 },
             { name: "Burak Garage", lat: 41.0000, lng: 28.9600 }
         ];
-        const msgs = [
+        var msgs = [
             "Bu akşam Boğaz yolunda rüzgar müthiş! 🌬️","Yeni lastiklerimle 180 km yaptım 🔥",
             "Garaja dönelim mi? Kahve içelim ☕","Hafta sonu grup sürüşü yapıyoruz 🏍️",
             "Kartal tarafında yol çalışması var ⚠️","Motor sesi bugün efsane!",
@@ -127,14 +124,23 @@
             map = L.map('map', { zoomControl: true, attributionControl: false }).setView([41.0082, 28.9784], 13);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-            var userIcon = L.divIcon({ html:'<div style="width:16px;height:16px;background:#3b82f6;border:3px solid #fff;border-radius:50%;box-shadow:0 0 10px rgba(59,130,246,0.6)"></div>', iconSize:[16,16], className:'' });
-            userMarker = L.marker([41.0082, 28.9784], { icon: userIcon }).addTo(map).bindPopup("<b>📍 Senin Konumun</b>");
-
-            var riderIcon = L.divIcon({ html:'<div style="width:12px;height:12px;background:#ef4444;border:2px solid #fff;border-radius:50%;box-shadow:0 0 6px rgba(239,68,68,0.5)"></div>', iconSize:[12,12], className:'' });
-            fakeUsers.forEach(function(u) {
-                var m = L.marker([u.lat, u.lng], { icon: riderIcon }).addTo(map).bindPopup("<b>🏍️ " + u.name + "</b><br>Aktif sürücü");
-                fakeMarkers.push({ marker: m, user: u });
+            var blueIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
             });
+            userMarker = L.marker([41.0082, 28.9784], { icon: blueIcon }).addTo(map).bindPopup("<b>📍 Senin Konumun</b>");
+
+            var redIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+            });
+            for (var i = 0; i < fakeUsers.length; i++) {
+                var u = fakeUsers[i];
+                var m = L.marker([u.lat, u.lng], { icon: redIcon }).addTo(map).bindPopup("<b>🏍️ " + u.name + "</b><br>Aktif sürücü");
+                fakeMarkers.push({ marker: m, user: u });
+            }
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(p) {
@@ -149,41 +155,58 @@
         }
 
         function moveFake() {
-            fakeMarkers.forEach(function(item) {
-                var c = item.marker.getLatLng();
-                item.marker.setLatLng([c.lat + (Math.random()-0.5)*0.002, c.lng + (Math.random()-0.5)*0.002]);
-            });
+            for (var i = 0; i < fakeMarkers.length; i++) {
+                var c = fakeMarkers[i].marker.getLatLng();
+                fakeMarkers[i].marker.setLatLng([c.lat + (Math.random()-0.5)*0.002, c.lng + (Math.random()-0.5)*0.002]);
+            }
         }
 
-        function addMsg(name, text, self) {
+        function addMsg(name, text, isSelf) {
             var container = document.getElementById('chat-messages');
             var div = document.createElement('div');
-            div.className = 'msg ' + (self ? 'self' : 'other');
-            div.innerHTML = (!self ? '<span class="msg-name">' + name + '</span>' : '') + '<div class="msg-bubble">' + text + '</div>';
+            div.className = 'msg ' + (isSelf ? 'self' : 'other');
+            var html = '';
+            if (!isSelf) { html += '<span class="msg-name">' + name + '</span>'; }
+            html += '<div class="msg-bubble">' + text + '</div>';
+            div.innerHTML = html;
             container.appendChild(div);
             container.scrollTop = container.scrollHeight;
+        }
+
+        function sendMessage() {
+            var input = document.getElementById('chat-input');
+            var t = input.value.trim();
+            if (t === '') return;
+            addMsg('Sen', t, true);
+            input.value = '';
+            input.focus();
         }
 
         window.addEventListener('DOMContentLoaded', function() {
             initMap();
 
             setInterval(function() {
-                var u = fakeUsers[Math.floor(Math.random()*fakeUsers.length)];
-                var t = msgs[Math.floor(Math.random()*msgs.length)];
+                var u = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
+                var t = msgs[Math.floor(Math.random() * msgs.length)];
                 addMsg(u.name, t, false);
             }, 8000);
 
             setInterval(moveFake, 3000);
 
-            var input = document.getElementById('chat-input');
-            var btn = document.getElementById('send-btn');
-            function send() { var t = input.value.trim(); if(!t) return; addMsg('Sen', t, true); input.value=''; }
-            btn.addEventListener('click', send);
-            input.addEventListener('keypress', function(e){ if(e.key==='Enter') send(); });
+            document.getElementById('send-btn').addEventListener('click', function() {
+                sendMessage();
+            });
 
-            setTimeout(function(){ addMsg("Kaan Moto","Merhaba Riders! Bugün neredesin?",false); }, 1500);
-            setTimeout(function(){ addMsg("Ece Speed","Harita çok temiz görünüyor, tebrikler!",false); }, 4000);
-            setTimeout(function(){ addMsg("Deniz Rider","Bu akşam Boğaz yolunda rüzgar müthiş! 🌬️",false); }, 7000);
+            document.getElementById('chat-input').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            setTimeout(function(){ addMsg("Kaan Moto","Merhaba Riders! Bugün neredesin?", false); }, 1500);
+            setTimeout(function(){ addMsg("Ece Speed","Harita çok temiz görünüyor, tebrikler!", false); }, 4000);
+            setTimeout(function(){ addMsg("Deniz Rider","Bu akşam Boğaz yolunda rüzgar müthiş! 🌬️", false); }, 7000);
         });
     </script>
 </body>
