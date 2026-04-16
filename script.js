@@ -1,9 +1,11 @@
-// Tailwind çalıştır
+// Riders Garage - Script.js
+
 document.documentElement.setAttribute('data-theme', 'dark')
 
 let map
 let userMarker
 let fakeMarkers = []
+
 const fakeUsers = [
     { name: "Kaan Moto", lat: 41.0125, lng: 28.9850 },
     { name: "Deniz Rider", lat: 41.0050, lng: 28.9700 },
@@ -22,26 +24,30 @@ const sampleMessages = [
 
 // Haritayı başlat
 function initMap() {
-    map = L.map('map', { zoomControl: true }).setView([41.0082, 28.9784], 14)
+    map = L.map('map', { 
+        zoomControl: true,
+        attributionControl: false 
+    }).setView([41.0082, 28.9784], 14)
     
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map)
 
-    // Kullanıcının konumu (mavi marker)
+    // Kullanıcının kendi konumu (mavi marker)
     userMarker = L.marker([41.0082, 28.9784], {
         title: "Sen"
     }).addTo(map)
+    
     userMarker.bindPopup("<b>Senin Konumun</b>").openPopup()
 
-    // Sahte kullanıcılar (kırmızı marker)
+    // Sahte sürücüler (kırmızı markerlar)
     fakeUsers.forEach(user => {
         const marker = L.marker([user.lat, user.lng]).addTo(map)
         marker.bindPopup(`<b>${user.name}</b><br>Canlı sürücü`)
         fakeMarkers.push({ marker: marker, user: user })
     })
 
-    // Tarayıcının gerçek konumunu al (izin verirse)
+    // Tarayıcının gerçek konumunu almaya çalış
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             (position) => {
@@ -50,9 +56,16 @@ function initMap() {
                 map.setView([lat, lng], 15)
                 userMarker.setLatLng([lat, lng])
             },
-            () => console.log("Konum izni verilmedi, demo konum kullanıldı")
+            () => {
+                console.log("Konum izni verilmedi, demo konum kullanıldı")
+            }
         )
     }
+
+    // Harita tam olarak yüklensin diye önemli düzeltme
+    setTimeout(() => {
+        map.invalidateSize()
+    }, 300)
 }
 
 // Sahte kullanıcıları yavaş yavaş hareket ettir
@@ -65,7 +78,7 @@ function moveFakeUsers() {
     })
 }
 
-// Chat'e mesaj ekle
+// Chat'e yeni mesaj ekle
 function addChatMessage(name, text, isSelf = false) {
     const container = document.getElementById('chat-messages')
     const div = document.createElement('div')
@@ -87,10 +100,10 @@ function startFakeMessages() {
         const randomUser = fakeUsers[Math.floor(Math.random() * fakeUsers.length)]
         const randomText = sampleMessages[Math.floor(Math.random() * sampleMessages.length)]
         addChatMessage(randomUser.name, randomText)
-    }, 8000 + Math.random() * 7000) // 8-15 saniye arası
+    }, 9000) // yaklaşık her 9 saniyede bir
 }
 
-// Sayfa yüklendiğinde her şeyi başlat
+// Sayfa tamamen yüklendiğinde her şeyi başlat
 document.addEventListener('DOMContentLoaded', () => {
     initMap()
     startFakeMessages()
@@ -105,20 +118,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function sendMessage() {
         const text = input.value.trim()
         if (text === '') return
+        
         addChatMessage('Sen', text, true)
         input.value = ''
     }
 
     sendBtn.addEventListener('click', sendMessage)
+    
     input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendMessage()
     })
 
-    // İlk 2 tane hoş geldin mesajı
+    // Hoş geldin mesajları
     setTimeout(() => {
         addChatMessage("Kaan Moto", "Merhaba Riders! Bugün neredesin?")
-    }, 2000)
+    }, 1500)
+    
     setTimeout(() => {
         addChatMessage("Ece Speed", "Harita çok temiz görünüyor, tebrikler!")
-    }, 4500)
+    }, 4000)
 })
