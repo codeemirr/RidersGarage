@@ -6,11 +6,67 @@
     <title>Riders Garage</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; width: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #09090b; color: #fff; }
+
+        /* HEADER */
+        .header { height: 56px; background: #18181b; border-bottom: 1px solid #27272a; display: flex; align-items: center; padding: 0 20px; gap: 28px; }
+        .logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .logo-icon { font-size: 26px; }
+        .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+        .nav-tabs { display: flex; gap: 4px; }
+        .nav-tab { color: #a1a1aa; text-decoration: none; padding: 8px 14px; border-radius: 10px; font-size: 14px; font-weight: 500; transition: all 0.2s; white-space: nowrap; }
+        .nav-tab:hover { background: #27272a; color: #fff; }
+        .nav-tab.active { background: #27272a; color: #fff; }
+
+        /* ANA İÇERİK */
+        .content { display: flex; flex-direction: row; height: calc(100vh - 56px); width: 100%; }
+
+        /* CHAT SOL */
+        .chat-panel { width: 380px; min-width: 380px; max-width: 380px; height: 100%; background: #18181b; border-right: 1px solid #27272a; display: flex; flex-direction: column; }
+        .chat-header { padding: 14px 16px; border-bottom: 1px solid #27272a; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+        .chat-title { font-size: 16px; font-weight: 600; }
+        .online-badge { background: #10b981; color: #fff; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 5px; }
+        .online-dot { width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+        .msg { display: flex; flex-direction: column; max-width: 85%; }
+        .msg.other { align-self: flex-start; }
+        .msg.self { align-self: flex-end; }
+        .msg-name { font-size: 11px; color: #71717a; margin-bottom: 3px; margin-left: 4px; }
+        .msg-bubble { padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.45; word-break: break-word; }
+        .msg.other .msg-bubble { background: #27272a; border-bottom-left-radius: 4px; }
+        .msg.self .msg-bubble { background: #2563eb; border-bottom-right-radius: 4px; }
+        .chat-input-area { padding: 12px; border-top: 1px solid #27272a; display: flex; gap: 8px; flex-shrink: 0; }
+        .chat-input-area input { flex: 1; background: #27272a; border: none; color: #fff; padding: 10px 16px; border-radius: 24px; font-size: 14px; outline: none; }
+        .chat-input-area input::placeholder { color: #71717a; }
+        .chat-input-area input:focus { box-shadow: 0 0 0 2px #2563eb; }
+        .chat-input-area button { background: #2563eb; color: #fff; border: none; padding: 10px 20px; border-radius: 24px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .chat-input-area button:hover { background: #3b82f6; }
+
+        /* HARİTA SAĞ */
+        .map-panel { flex: 1; height: 100%; position: relative; min-width: 0; }
+        #map { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; z-index: 1; }
+
+        /* MOBİL */
+        .mobile-nav { display: none; }
+        @media (max-width: 768px) {
+            .nav-tabs { display: none; }
+            .content { flex-direction: column-reverse; height: calc(100vh - 56px - 56px); }
+            .chat-panel { width: 100%; min-width: 100%; max-width: 100%; height: 50%; border-right: none; border-top: 1px solid #27272a; }
+            .map-panel { height: 50%; flex: none; }
+            .mobile-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; height: 56px; background: #18181b; border-top: 1px solid #27272a; z-index: 100; align-items: center; justify-content: space-around; }
+            .mobile-nav a { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #71717a; font-size: 18px; gap: 2px; }
+            .mobile-nav a span { font-size: 10px; }
+            .mobile-nav a.active { color: #fff; }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Üst Bar -->
     <header class="header">
         <div class="logo">
             <span class="logo-icon">🏍️</span>
@@ -25,17 +81,11 @@
         </nav>
     </header>
 
-    <!-- Ana İçerik: Chat (sol) + Harita (sağ) -->
     <main class="content">
-
-        <!-- Sol: Chat -->
         <div class="chat-panel">
             <div class="chat-header">
                 <span class="chat-title">Canlı Sohbet</span>
-                <span class="online-badge">
-                    <span class="online-dot"></span>
-                    4 online
-                </span>
+                <span class="online-badge"><span class="online-dot"></span>4 online</span>
             </div>
             <div id="chat-messages" class="chat-messages"></div>
             <div class="chat-input-area">
@@ -43,15 +93,11 @@
                 <button id="send-btn">Gönder</button>
             </div>
         </div>
-
-        <!-- Sağ: Harita -->
         <div class="map-panel">
             <div id="map"></div>
         </div>
-
     </main>
 
-    <!-- Mobil Alt Menü -->
     <nav class="mobile-nav">
         <a href="#">🏠<span>Ana Sayfa</span></a>
         <a href="#" class="active">🗺️<span>Harita</span></a>
@@ -60,6 +106,85 @@
         <a href="#">👤<span>Profil</span></a>
     </nav>
 
-    <script src="script.js"></script>
+    <script>
+        let map, userMarker, fakeMarkers = [];
+        const fakeUsers = [
+            { name: "Kaan Moto", lat: 41.0125, lng: 28.9850 },
+            { name: "Deniz Rider", lat: 41.0050, lng: 28.9700 },
+            { name: "Ece Speed", lat: 41.0150, lng: 28.9900 },
+            { name: "Burak Garage", lat: 41.0000, lng: 28.9600 }
+        ];
+        const msgs = [
+            "Bu akşam Boğaz yolunda rüzgar müthiş! 🌬️","Yeni lastiklerimle 180 km yaptım 🔥",
+            "Garaja dönelim mi? Kahve içelim ☕","Hafta sonu grup sürüşü yapıyoruz 🏍️",
+            "Kartal tarafında yol çalışması var ⚠️","Motor sesi bugün efsane!",
+            "Kadıköy sahilden geçtim, manzara harika 🌅","Yağmur geliyor, dikkat 🌧️",
+            "Yeni kask aldım, çok rahat 🪖","Bu gece sürüş var mı?",
+            "Beşiktaş'ta trafik yoğun","Maslak tarafı boş, rahat sürüş 👌"
+        ];
+
+        function initMap() {
+            map = L.map('map', { zoomControl: true, attributionControl: false }).setView([41.0082, 28.9784], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+            var userIcon = L.divIcon({ html:'<div style="width:16px;height:16px;background:#3b82f6;border:3px solid #fff;border-radius:50%;box-shadow:0 0 10px rgba(59,130,246,0.6)"></div>', iconSize:[16,16], className:'' });
+            userMarker = L.marker([41.0082, 28.9784], { icon: userIcon }).addTo(map).bindPopup("<b>📍 Senin Konumun</b>");
+
+            var riderIcon = L.divIcon({ html:'<div style="width:12px;height:12px;background:#ef4444;border:2px solid #fff;border-radius:50%;box-shadow:0 0 6px rgba(239,68,68,0.5)"></div>', iconSize:[12,12], className:'' });
+            fakeUsers.forEach(function(u) {
+                var m = L.marker([u.lat, u.lng], { icon: riderIcon }).addTo(map).bindPopup("<b>🏍️ " + u.name + "</b><br>Aktif sürücü");
+                fakeMarkers.push({ marker: m, user: u });
+            });
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(p) {
+                    map.setView([p.coords.latitude, p.coords.longitude], 14);
+                    userMarker.setLatLng([p.coords.latitude, p.coords.longitude]);
+                }, function() {});
+            }
+
+            setTimeout(function(){ map.invalidateSize(); }, 200);
+            setTimeout(function(){ map.invalidateSize(); }, 500);
+            setTimeout(function(){ map.invalidateSize(); }, 1500);
+        }
+
+        function moveFake() {
+            fakeMarkers.forEach(function(item) {
+                var c = item.marker.getLatLng();
+                item.marker.setLatLng([c.lat + (Math.random()-0.5)*0.002, c.lng + (Math.random()-0.5)*0.002]);
+            });
+        }
+
+        function addMsg(name, text, self) {
+            var container = document.getElementById('chat-messages');
+            var div = document.createElement('div');
+            div.className = 'msg ' + (self ? 'self' : 'other');
+            div.innerHTML = (!self ? '<span class="msg-name">' + name + '</span>' : '') + '<div class="msg-bubble">' + text + '</div>';
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            initMap();
+
+            setInterval(function() {
+                var u = fakeUsers[Math.floor(Math.random()*fakeUsers.length)];
+                var t = msgs[Math.floor(Math.random()*msgs.length)];
+                addMsg(u.name, t, false);
+            }, 8000);
+
+            setInterval(moveFake, 3000);
+
+            var input = document.getElementById('chat-input');
+            var btn = document.getElementById('send-btn');
+            function send() { var t = input.value.trim(); if(!t) return; addMsg('Sen', t, true); input.value=''; }
+            btn.addEventListener('click', send);
+            input.addEventListener('keypress', function(e){ if(e.key==='Enter') send(); });
+
+            setTimeout(function(){ addMsg("Kaan Moto","Merhaba Riders! Bugün neredesin?",false); }, 1500);
+            setTimeout(function(){ addMsg("Ece Speed","Harita çok temiz görünüyor, tebrikler!",false); }, 4000);
+            setTimeout(function(){ addMsg("Deniz Rider","Bu akşam Boğaz yolunda rüzgar müthiş! 🌬️",false); }, 7000);
+        });
+    </script>
 </body>
 </html>
