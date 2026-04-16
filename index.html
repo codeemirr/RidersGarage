@@ -12,66 +12,67 @@
 <body class="bg-zinc-950 text-white font-sans">
 
     <!-- Header -->
-    <header class="h-16 bg-zinc-900 border-b border-zinc-800 flex items-center px-8">
-        <div class="flex items-center gap-3">
-            <span class="text-4xl">🏍️</span>
-            <h1 class="text-3xl font-bold tracking-tighter">Riders Garage</h1>
+    <header class="h-14 bg-zinc-900 border-b border-zinc-800 flex items-center px-4 md:px-8 shrink-0">
+        <div class="flex items-center gap-2">
+            <span class="text-2xl md:text-3xl">🏍️</span>
+            <h1 class="text-xl md:text-2xl font-bold tracking-tighter">Riders Garage</h1>
         </div>
+        <!-- Mobilde chat/harita geçiş butonu -->
+        <button id="toggle-view" class="ml-auto md:hidden bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 rounded-xl text-sm font-medium transition">
+            💬 Sohbet
+        </button>
     </header>
 
-    <div class="flex h-[calc(100vh-4rem)] overflow-hidden">
-        
-        <!-- Sol Sidebar -->
-        <aside class="w-72 bg-zinc-900 border-r border-zinc-800 flex flex-col py-8">
-            <nav class="flex-1 px-3 space-y-2">
-                <div onclick="return false" class="flex items-center gap-4 px-6 py-4 hover:bg-zinc-800 rounded-2xl cursor-pointer text-lg">
+    <div class="flex main-container overflow-hidden">
+
+        <!-- Sol Sidebar - Masaüstünde görünür -->
+        <aside class="sidebar hidden md:flex w-56 bg-zinc-900 border-r border-zinc-800 flex-col py-6 shrink-0">
+            <nav class="flex-1 px-2 space-y-1">
+                <div class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 rounded-xl cursor-pointer text-sm">
                     🏠 Ana Sayfa
                 </div>
-                <div onclick="return false" class="flex items-center gap-4 px-6 py-4 bg-zinc-800 rounded-2xl cursor-pointer text-lg font-medium">
+                <div class="flex items-center gap-3 px-4 py-3 bg-zinc-800 rounded-xl cursor-pointer text-sm font-medium">
                     🗺️ Harita
                 </div>
-                <div onclick="return false" class="flex items-center gap-4 px-6 py-4 hover:bg-zinc-800 rounded-2xl cursor-pointer text-lg">
+                <div class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 rounded-xl cursor-pointer text-sm">
                     💬 Mesajlar
                 </div>
-                <div onclick="return false" class="flex items-center gap-4 px-6 py-4 hover:bg-zinc-800 rounded-2xl cursor-pointer text-lg">
+                <div class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-800 rounded-xl cursor-pointer text-sm">
                     👤 Profil
                 </div>
             </nav>
-            <div class="px-6 text-xs text-zinc-500 mt-auto">
-                Demo • Tek kişilik proje
-            </div>
         </aside>
 
-        <!-- Ana İçerik: Harita + Chat -->
-        <div class="flex flex-1">
-            
+        <!-- Ana İçerik -->
+        <div class="flex flex-1 min-w-0 relative">
+
             <!-- Harita Alanı -->
-            <div id="map-container" class="flex-1 relative">
+            <div id="map-container" class="map-panel flex-1 relative">
                 <div id="map" class="absolute inset-0"></div>
             </div>
 
             <!-- Sağ Chat Paneli -->
-            <div class="w-96 bg-zinc-900 border-l border-zinc-800 flex flex-col">
-                <div class="p-5 border-b border-zinc-800 flex items-center justify-between bg-zinc-900">
-                    <h2 class="text-xl font-semibold">Canlı Sohbet</h2>
-                    <div class="px-3 py-1 bg-emerald-500 text-xs font-medium rounded-3xl flex items-center gap-1">
-                        <div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+            <div id="chat-panel" class="chat-panel bg-zinc-900 border-l border-zinc-800 flex flex-col">
+                <div class="p-4 border-b border-zinc-800 flex items-center justify-between">
+                    <h2 class="text-base font-semibold">Canlı Sohbet</h2>
+                    <div class="px-2.5 py-1 bg-emerald-500 text-xs font-medium rounded-full flex items-center gap-1">
+                        <div class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
                         4 online
                     </div>
                 </div>
-                
+
                 <!-- Mesajlar -->
-                <div id="chat-messages" class="flex-1 p-5 overflow-y-auto space-y-5"></div>
-                
+                <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4"></div>
+
                 <!-- Mesaj Gönderme -->
-                <div class="p-5 border-t border-zinc-800 bg-zinc-900">
-                    <div class="flex gap-3">
-                        <input id="chat-input" 
-                               type="text" 
-                               class="flex-1 bg-zinc-800 text-white placeholder-zinc-400 rounded-3xl px-6 py-4 outline-none focus:ring-2 focus:ring-blue-500"
-                               placeholder="Mesaj yaz...">
+                <div class="p-3 border-t border-zinc-800">
+                    <div class="flex gap-2">
+                        <input id="chat-input"
+                            type="text"
+                            class="flex-1 bg-zinc-800 text-white placeholder-zinc-400 rounded-full px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Mesaj yaz...">
                         <button id="send-btn"
-                                class="bg-blue-600 hover:bg-blue-500 px-8 rounded-3xl font-medium transition">
+                            class="bg-blue-600 hover:bg-blue-500 px-5 rounded-full text-sm font-medium transition">
                             Gönder
                         </button>
                     </div>
@@ -79,6 +80,26 @@
             </div>
         </div>
     </div>
+
+    <!-- Mobil Alt Menü -->
+    <nav class="mobile-nav md:hidden fixed bottom-0 left-0 right-0 h-14 bg-zinc-900 border-t border-zinc-800 flex items-center justify-around z-50">
+        <div class="flex flex-col items-center text-xs text-zinc-400 cursor-pointer">
+            <span class="text-lg">🏠</span>
+            Ana Sayfa
+        </div>
+        <div class="flex flex-col items-center text-xs text-white cursor-pointer">
+            <span class="text-lg">🗺️</span>
+            Harita
+        </div>
+        <div class="flex flex-col items-center text-xs text-zinc-400 cursor-pointer">
+            <span class="text-lg">💬</span>
+            Mesajlar
+        </div>
+        <div class="flex flex-col items-center text-xs text-zinc-400 cursor-pointer">
+            <span class="text-lg">👤</span>
+            Profil
+        </div>
+    </nav>
 
     <script src="script.js"></script>
 </body>
